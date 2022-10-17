@@ -11,6 +11,8 @@ const defaultConfig: Config = {
     onDonation: () => null,
     onShopOrder: () => null,
     onSubscription: () => null,
+    onError: () => null,
+    verificationToken: false,
 };
 
 const kofiHandler = (config: Config) => async (req: Request, res: Response) => {
@@ -18,6 +20,11 @@ const kofiHandler = (config: Config) => async (req: Request, res: Response) => {
 
     try {
         const parsed: RequestData = JSON.parse(data);
+
+        if (config.verificationToken && parsed.verification_token !== config.verificationToken) {
+            console.error('Ko-fi invalid verification token');
+            return res.sendStatus(401);
+        }
 
         await config.onData?.(parsed, req);
 
@@ -37,7 +44,9 @@ const kofiHandler = (config: Config) => async (req: Request, res: Response) => {
         }
     } catch (err) {
         console.error('Ko-fi request error: ', err);
-        res.sendStatus(400);
+        config.onError?.(req);
+
+        return res.sendStatus(400);
     }
 
     res.sendStatus(200);
@@ -58,6 +67,8 @@ export interface Config {
     onDonation: Callback<DonationData>;
     onShopOrder: Callback<ShopOrderData>;
     onSubscription: Callback<SubscriptionData>;
+    onError: (req: Request) => void;
+    verificationToken: string | false;
 }
 
 export type Callback<TData> = (data: TData, req: Request) => void | null | undefined | Promise<void>;
