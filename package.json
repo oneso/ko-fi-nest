@@ -1,6 +1,6 @@
 {
   "name": "@ko-fi/nest",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Ko-fi webhook handler for NestJS",
   "main": "index.js",
   "scripts": {

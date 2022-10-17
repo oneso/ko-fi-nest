@@ -44,7 +44,7 @@ const kofiHandler = (config: Config) => async (req: Request, res: Response) => {
         }
     } catch (err) {
         console.error('Ko-fi request error: ', err);
-        config.onError?.(req);
+        config.onError?.(err, req);
 
         return res.sendStatus(400);
     }
@@ -67,7 +67,7 @@ export interface Config {
     onDonation: Callback<DonationData>;
     onShopOrder: Callback<ShopOrderData>;
     onSubscription: Callback<SubscriptionData>;
-    onError: (req: Request) => void;
+    onError: (err: any, req: Request) => void;
     verificationToken: string | false;
 }
 
