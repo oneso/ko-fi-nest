@@ -1,0 +1,8 @@
+{
+  "include": ["index.ts"],
+  "compilerOptions": {
+    // Generate d.ts files
+    "declaration": true,
+    "esModuleInterop": true
+  }
+}
