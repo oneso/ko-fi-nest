@@ -1,13 +1,17 @@
 {
   "name": "@ko-fi/nest",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Ko-fi webhook handler for NestJS",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npx tsc"
   },
-  "keywords": [],
+  "keywords": [
+    "ko-fi",
+    "kofi",
+    "nest"
+  ],
   "author": "onseso",
   "license": "ISC",
   "files": [
