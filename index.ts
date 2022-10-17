@@ -1,21 +1,10 @@
 import type { MiddlewareConsumer } from '@nestjs/common';
 import type { Request, Response } from 'express';
 
-import { CommissionData, DonationData, RequestData, ShopOrderData, SubscriptionData, Type } from '@ko-fi/types';
+import { Config, mergeConfig, RequestData, Type } from '@ko-fi/types';
 import { RequestMethod } from '@nestjs/common/enums';
 
-const defaultConfig: Config = {
-    endpoint: 'webhook',
-    onData: () => null,
-    onCommission: () => null,
-    onDonation: () => null,
-    onShopOrder: () => null,
-    onSubscription: () => null,
-    onError: () => null,
-    verificationToken: false,
-};
-
-const kofiHandler = (config: Config) => async (req: Request, res: Response) => {
+const kofiHandler = (config: Config<Request>) => async (req: Request, res: Response) => {
     const { data } = req.body as { data: string; };
 
     try {
@@ -52,23 +41,10 @@ const kofiHandler = (config: Config) => async (req: Request, res: Response) => {
     res.sendStatus(200);
 };
 
-export const kofi = (consumer: MiddlewareConsumer, config?: Partial<Config>) => {
-    const conf = { ...defaultConfig, ...config };
+export const kofi = (consumer: MiddlewareConsumer, config?: Partial<Config<Request>>) => {
+    const conf = mergeConfig(config);
 
     consumer
         .apply(kofiHandler(conf))
         .forRoutes({ path: conf.endpoint, method: RequestMethod.POST });
 };
-
-export interface Config {
-    endpoint: string;
-    onData: Callback<RequestData>;
-    onCommission: Callback<CommissionData>;
-    onDonation: Callback<DonationData>;
-    onShopOrder: Callback<ShopOrderData>;
-    onSubscription: Callback<SubscriptionData>;
-    onError: (err: any, req: Request) => void;
-    verificationToken: string | false;
-}
-
-export type Callback<TData> = (data: TData, req: Request) => void | null | undefined | Promise<void>;
